@@ -2,9 +2,21 @@
 
 这是一个使用Python和Selenium WebDriver编写的网页爬虫项目。项目的主要功能是打开指定的网页，获取网页的源代码，以及从API获取和发送JSON数据。
 
-## 安装
+## 环境要求
 
-首先，你需要安装Python和pip。然后，你可以使用pip来安装项目的依赖：
+这个项目需要以下环境才能运行：
+
+- Python 3.9 或更高版本
+- pip
+- Docker
+- docker-compose
+
+此外，你还需要安装以下Python库：
+
+- selenium~=4.18.1
+- requests~=2.31.0
+
+你可以通过运行以下命令来安装这些库：
 
 ```bash
 pip install -r requirements.txt
