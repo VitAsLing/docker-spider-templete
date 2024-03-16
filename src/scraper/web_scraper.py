@@ -8,23 +8,21 @@ import requests
 # 打开指定URL的网页，如果失败则重试3次，每次失败后等待3秒
 def open_webpage_with_chrome(url):
     driver = None
-    for _ in range(3):
-        try:
-            driver = webdriver.Remote(
-                command_executor="http://chrome:4444/wd/hub",
-                options=get_chrome_options()
-            )
-            driver.get(url)
-            time.sleep(1)
-            check_webpage_status(url)
-            return driver.page_source
-        except Exception as e:
-            print(f"An error occurred: {e}, retrying in 3 seconds...")
-            time.sleep(3)
-        finally:
-            if driver:
-                driver.quit()
-    raise Exception("Max retries exceeded.")
+    try:
+        driver = webdriver.Remote(
+            command_executor="http://chrome:4444/wd/hub",
+            options=get_chrome_options()
+        )
+        driver.implicitly_wait(5)  # 设置隐式等待时间为5秒
+        driver.get(url)
+        time.sleep(1)
+        check_webpage_status(url)
+        return driver.page_source
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if driver:
+            driver.quit()
 
 
 # 获取Chrome的选项配置
@@ -45,13 +43,21 @@ def check_webpage_status(url):
 
 # 从指定的API URL获取JSON数据
 def get_json_from_api(api_url):
-    response = requests.get(api_url, timeout=10)  # 设置超时时间为10秒
-    response.raise_for_status()
-    return response.json()
+    try:
+        response = requests.get(api_url, timeout=10)  # 设置超时时间为10秒
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while making the HTTP request: {e}")
+        return None
 
 
 # 向指定的API URL发送JSON数据
 def post_json_to_api(api_url, data):
-    response = requests.post(api_url, json=data, timeout=10)  # 设置超时时间为10秒
-    response.raise_for_status()
-    return response.json()
+    try:
+        response = requests.post(api_url, json=data, timeout=10)  # 设置超时时间为10秒
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while making the HTTP request: {e}")
+        return None
